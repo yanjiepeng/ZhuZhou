@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mingjiang.android.serialport.api">
+
+    <application android:allowBackup="true">
+
+    </application>
+
+</manifest>
