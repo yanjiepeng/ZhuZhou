@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">ZhuZhou</string>
+    <string name="app_name">株洲</string>
+    <string name="title_name">株洲中车信息化</string>
+    <string name="menu_settings">设置</string>
 </resources>
