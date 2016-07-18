@@ -26,9 +26,12 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".SetConfigureActivity">
+        <activity android:name=".SetConfigureActivity"></activity>
 
-        </activity>
+        <service
+            android:name=".service.MqttService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

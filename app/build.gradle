@@ -30,4 +30,5 @@ dependencies {
     compile project(':android-serialport-api')
     compile files('libs/wmqtt.jar')
     compile 'com.android.support:design:24.0.0-beta1'
+    compile files('libs/mqttv3.jar')
 }

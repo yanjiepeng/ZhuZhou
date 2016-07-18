@@ -13,14 +13,16 @@ import android.widget.Toast;
 import android.provider.Settings.Secure;
 
 import com.zk.zhuzhou.EventBus.EventComm;
-import com.zk.zhuzhou.mqtt.PushService;
-import com.zk.zhuzhou.service.CommService;
+import com.zk.zhuzhou.EventBus.MqttEvent;
+import com.zk.zhuzhou.Utils.L;
+import com.zk.zhuzhou.service.MqttService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.Method;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -39,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
         mDeviceID = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
         EventBus.getDefault().register(this);
-        startService(new Intent(MainActivity.this, CommService.class));
-        startMQTTClient();
+      //  startService(new Intent(MainActivity.this, CommService.class));
+        initMQTT();
     }
 
     /*
@@ -67,32 +69,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     /**
-     * 开启mqtt消息推送
+     * 初始化mqtt消息推送
      *
      * @author Yan jiepeng
-     * @time 2016/7/14 8:52
+     * @time 2016/7/14 8:51
      */
 
-    private void startMQTTClient() {
+    private void initMQTT() {
 
-        SharedPreferences.Editor editor = getSharedPreferences(PushService.TAG, MODE_PRIVATE).edit();
-        editor.putString(PushService.PREF_DEVICE_ID, mDeviceID);
-        editor.commit();
-        PushService.actionStart(getApplicationContext());
+        String[] topics = new String[]{"test"};
+        Intent intent = new Intent(this , MqttService.class) ;
+        intent.putExtra("topics" , topics) ;
+        startService(intent);
     }
 
 
-    /**
-     * 关闭MQTT推送
-     *
-     * @author Yan jiepeng
-     * @time 2016/7/14 8:54
+
+
+    /*
+     收到MQTT消息回掉此处
      */
-
-    private void stopMQTTClient() {
-
-        PushService.actionStop(getApplicationContext());
+    @Subscribe (threadMode = ThreadMode.MAIN)
+    public void GetMqttData(MqttEvent event) {
+            if (event != null ){
+                L.e(event.getMsg()+event.getTopic());
+            }
     }
 
     /*
@@ -100,9 +103,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void GetCommData(EventComm eventComm) {
-
         switch (eventComm.getCommId()) {
-
             case 1:
                 Toast.makeText(MainActivity.this, new String(eventComm.getData()), Toast.LENGTH_SHORT).show();
                 break;
@@ -113,8 +114,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences p = getSharedPreferences(PushService.TAG, MODE_PRIVATE);
-        boolean started = p.getBoolean(PushService.PREF_STARTED, false);
     }
 
     @Override
